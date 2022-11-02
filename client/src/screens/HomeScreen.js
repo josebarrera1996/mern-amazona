@@ -1,10 +1,27 @@
-import data from "../data";
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import axios from 'axios';
 
 // Componente de tipo funcional
 // En este se renderizarán los productos
 
 function HomeScreen() {
+
+    // Utilizando 'useState' para el manejo de los productos 
+    const [products, setProducts] = useState([]);
+
+
+    // Utilizando 'useEffect' para traer los productos 
+    useEffect(() => {
+
+        const fetchData = async () => {
+            const result = await axios.get('/api/products'); // Accediendo a los productos del servidor
+            setProducts(result.data); // Actualizando el estado con lo obtenido en 'result'
+        };
+
+        fetchData(); // Invocando la fusión asíncrona
+    }, []); // Se renderizará una sola vez, cuando accedamos a este componente
+
 
     return (
 
@@ -12,7 +29,7 @@ function HomeScreen() {
             <h1>Featured Products</h1>
             <div className="products">
                 {
-                    data.products.map((product) => (
+                    products.map((product) => (
                         <div className="product" key={product.slug}>
                             <Link to={`/product/${product.slug}`}>
                                 <img src={product.image} alt={product.name} />
