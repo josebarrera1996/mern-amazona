@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
 import { useEffect, useReducer } from "react";
 import axios from 'axios';
 import logger from 'use-reducer-logger'; // Para logear los cambios de estado
+import { Row, Col } from 'react-bootstrap';
+import Product from '../components/Product';
 
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
@@ -103,22 +104,14 @@ function HomeScreen() {
                         <div>{error}</div>
                     ) : (
                         // Si 'loading' es false y no hay ningún error, mostrar los productos
-                        products.map((product) => (
-                            <div className="product" key={product.slug}>
-                                <Link to={`/product/${product.slug}`}>
-                                    <img src={product.image} alt={product.name} />
-                                </Link>
-                                <div className="product-info">
-                                    <Link to={`/product/${product.slug}`}>
-                                        <p>{product.name}</p>
-                                    </Link>
-                                    <p>
-                                        <strong>${product.price}</strong>
-                                    </p>
-                                    <button>Add to cart</button>
-                                </div>
-                            </div>
-                        ))
+                        <Row>
+                            {products.map((product) => (
+                                <Col key={product.slug} sm={6} md={4} lg={3} className='mb-3'>
+                                    {/* Renderizando el componente 'Product' */}
+                                    <Product product={product} />
+                                </Col>
+                            ))}
+                        </Row>
                     )}
             </div>
         </div>

@@ -41,3 +41,7 @@
     1. npm install react-bootstrap bootstrap
     2. npm install react-router-bootstrap
     2. update App.js
+10. Create Product and Rating Component
+    1. create Rating component
+    2. Create Product component
+    3. Use Rating component in Product component
