@@ -3,6 +3,7 @@ import axios from 'axios';
 import logger from 'use-reducer-logger'; // Para logear los cambios de estado
 import { Row, Col } from 'react-bootstrap';
 import Product from '../components/Product';
+import { Helmet } from "react-helmet-async";
 
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
@@ -93,6 +94,9 @@ function HomeScreen() {
     return (
 
         <div>
+            <Helmet>
+                <title>Amazona</title>
+            </Helmet>
             <h1>Featured Products</h1>
             <div className="products">
                 {/* Si 'loading' es true, mostrar lo siguiente */}
