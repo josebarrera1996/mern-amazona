@@ -4,6 +4,8 @@ import logger from 'use-reducer-logger'; // Para logear los cambios de estado
 import { Row, Col } from 'react-bootstrap';
 import Product from '../components/Product';
 import { Helmet } from "react-helmet-async";
+import LoadingBox from "../components/LoadingBox";
+import MessageBox from "../components/MessageBox";
 
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
@@ -99,13 +101,13 @@ function HomeScreen() {
             </Helmet>
             <h1>Featured Products</h1>
             <div className="products">
-                {/* Si 'loading' es true, mostrar lo siguiente */}
+                {/* Si 'loading' es true, renderizar el siguiente componente */}
                 {loading ? (
-                    <div>Loading...</div>
+                    <LoadingBox />
                 ) :
-                    // Si se produce un error, mostrar lo siguiente
+                    // Si se produce un error, renderizar el siguiente componente
                     error ? (
-                        <div>{error}</div>
+                        <MessageBox variant='danger'>{error}</MessageBox>
                     ) : (
                         // Si 'loading' es false y no hay ningún error, mostrar los productos
                         <Row>

@@ -4,6 +4,9 @@ import axios from 'axios';
 import { Row, Col, ListGroup, Card, Badge, Button } from 'react-bootstrap';
 import Rating from '../components/Rating';
 import { Helmet } from 'react-helmet-async';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
+import { getError } from '../utils'; // Para el manejo de errores
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
 // El 1er parámetro hace referencia al 'estado' actual
@@ -87,7 +90,7 @@ function ProductScreen() {
             } catch (error) {
 
                 // Si hubo un error, actualizar el estado de 'loading' y 'error' al despachar 'FETCH_FAIL'
-                dispatch({ type: 'FETCH_FAIL', payload: error.message });
+                dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
             }
         };
 
@@ -96,9 +99,9 @@ function ProductScreen() {
 
     return (
         // Si 'loading' es true, mostrar lo siguiente
-        loading ? <div>Loading....</div> :
+        loading ? <LoadingBox /> :
             // Si hay un error, mostrar lo siguiente:
-            error ? <div>{error}</div> :
+            error ? <MessageBox variant='danger'>{error}</MessageBox> :
                 // Caso contrario, mostrar los detalles del producto
                 <div>
                     <Row>
