@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import axios from 'axios';
 import { Row, Col, ListGroup, Card, Badge, Button } from 'react-bootstrap';
 import Rating from '../components/Rating';
@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils'; // Para el manejo de errores
+import { Store } from '../Store'; // Para manejar el contexto general
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
 // El 1er parámetro hace referencia al 'estado' actual
@@ -97,7 +98,24 @@ function ProductScreen() {
         fetchData(); // Invocando la fusión asíncrona
     }, [slug]); // Se renderizará cada vez que haya un cambio en el estado del 'slug'
 
+    // Utilizaremos 'useContext' para poder tener acceso al estado del propio contexto
+    // Y la posibilidad de cambiarlo. Respecto a esto se renombra a 'dispatch' para poder
+    // diferenciarlo del componente actual en el Reducer
+    const { state, dispatch: ctxDispatch } = useContext(Store); 
+
+    // Método para añadir items al Carrito
+    const addToCartHandler = () => {
+
+        // Para poder añadir un item al Carrito, se necesita enviar (dispatch) una acción en el contexto
+        ctxDispatch({
+
+            type: 'CART_ADD_ITEM',
+            payload: { ...product, quantity: 1 }, // Se incrementará la cantidad de 1 en 1
+        });
+    };
+
     return (
+        
         // Si 'loading' es true, mostrar lo siguiente
         loading ? <LoadingBox /> :
             // Si hay un error, mostrar lo siguiente:
@@ -163,7 +181,9 @@ function ProductScreen() {
                                         {product.countInStock > 0 && (
                                             <ListGroup.Item>
                                                 <div className="d-grid">
-                                                    <Button variant="primary">Add to Cart</Button>
+                                                    <Button onClick={addToCartHandler} variant="primary">
+                                                        Add to Cart
+                                                    </Button>
                                                 </div>
                                             </ListGroup.Item>
                                         )}
