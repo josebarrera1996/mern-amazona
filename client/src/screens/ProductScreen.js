@@ -101,21 +101,38 @@ function ProductScreen() {
     // Utilizaremos 'useContext' para poder tener acceso al estado del propio contexto
     // Y la posibilidad de cambiarlo. Respecto a esto se renombra a 'dispatch' para poder
     // diferenciarlo del componente actual en el Reducer
-    const { state, dispatch: ctxDispatch } = useContext(Store); 
+    const { state, dispatch: ctxDispatch } = useContext(Store);
+    const { cart } = state;
 
     // Método para añadir items al Carrito
-    const addToCartHandler = () => {
+    const addToCartHandler = async () => {
+
+        // Chequear si el el producto actual existe en el Carrito o no
+        const existItem = cart.cartItems.find((x) => x._id === product._id);
+
+        // Si existe, incrementaremos la cantidad en '1'
+        const quantity = existItem ? existItem.quantity + 1 : 1;
+
+        // Chequear si hay stock suficiente para poder sumar el producto al Carrito
+        const { data } = await axios.get(`/api/products/${product._id}`);
+
+        // Si el stock del producto en cuestión es menor que la cantidad que se quiere de el...
+        if (data.countInStock < quantity) {
+
+            window.alert('Sorry. Product is out of stock');
+            return;
+        }
 
         // Para poder añadir un item al Carrito, se necesita enviar (dispatch) una acción en el contexto
         ctxDispatch({
 
             type: 'CART_ADD_ITEM',
-            payload: { ...product, quantity: 1 }, // Se incrementará la cantidad de 1 en 1
+            payload: { ...product, quantity }, // Se incrementará la cantidad de 1 en 1
         });
     };
 
     return (
-        
+
         // Si 'loading' es true, mostrar lo siguiente
         loading ? <LoadingBox /> :
             // Si hay un error, mostrar lo siguiente:

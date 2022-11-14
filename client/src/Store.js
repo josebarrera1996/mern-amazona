@@ -27,16 +27,29 @@ function reducer(state, action) {
         // Este caso hace referencia a cuando queremos añadir items al carrito
         case 'CART_ADD_ITEM':
 
-            return {
+            // Chequear si el item a agregar ya existe en el Carrito, para evitar insertar al mismo más de una vez
+            // Solamente incrementaremos la cantidad del mismo
+            const newItem = action.payload;
 
-                ...state,
-                // La lógica implementada aquí permitirá conservar los items añadidos al cart
-                // Y actualizar al mismo cuando agreguemos nuevos
-                cart: {
-                    ...state.cart,
-                    cartItems: [...state.cart.cartItems, action.payload],
-                },
-            };
+            // Chequear si el item a agregar ya existe en el Carrito
+            const existItem = state.cart.cartItems.find(
+                (item) => item._id === newItem._id
+            );
+
+
+            const cartItems = existItem
+
+                ? state.cart.cartItems.map((item) =>
+                    // Si el item ya existe en el Cartito, actualizaremos el item actual con el nuevo que obtenemos
+                    // del 'action.payload'
+                    item._id === existItem._id ? newItem :
+                        item // Caso contrario, mantener el item anterior en el Carrito
+                )
+                // Si el item no existe en el Carrito, quiere decir que es un nuevo item y por lo tanto debe ser agregado
+                // al final del arreglo
+                : [...state.cart.cartItems, newItem];
+
+            return { ...state, cart: { ...state.cart, cartItems } };
 
         default:
             return state;
@@ -53,6 +66,6 @@ export function StoreProvider(props) {
     // Este objeto contiene el estado actual del contexto (state)
     // Y 'dispatch' para actualizar al estado en el contexto
     const value = { state, dispatch };
-    
+
     return <Store.Provider value={value}>{props.children}</Store.Provider>;
 }

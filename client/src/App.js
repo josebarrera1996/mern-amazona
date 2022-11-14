@@ -28,7 +28,8 @@ function App() {
                   {/* Si hay items en el carrito se mostrará lo siguiente */}
                   {cart.cartItems.length > 0 && (
                     <Badge pill bg="danger">
-                      {cart.cartItems.length}
+                      {/* Se mostrará la cantidad de items agregados */}
+                      {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
                     </Badge>
                   )}
                 </Link>
