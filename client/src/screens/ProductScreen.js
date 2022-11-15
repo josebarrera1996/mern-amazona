@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { /* useNavigate ,*/ useParams } from 'react-router-dom';
 import { useContext, useEffect, useReducer } from "react";
 import axios from 'axios';
 import { Row, Col, ListGroup, Card, Badge, Button } from 'react-bootstrap';
@@ -55,6 +55,9 @@ const reducer = (state, action) => {
 // En este se renderizará el componente a nivel individual
 
 function ProductScreen() {
+
+    // Utilizando 'useNavigate' para navegar
+    // const navigate = useNavigate();
 
     // Utilizando 'useParams' para capturar el parámetro de la URL
     const params = useParams();
@@ -129,6 +132,8 @@ function ProductScreen() {
             type: 'CART_ADD_ITEM',
             payload: { ...product, quantity }, // Se incrementará la cantidad de 1 en 1
         });
+
+        // navigate('/cart'); 
     };
 
     return (
