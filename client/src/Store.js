@@ -15,8 +15,9 @@ const initialState = {
     // El primer campo del objeto es 'cart'
     // Que a su vez es un objeto en el que se almacenarán los items del carrito
     cart: {
-        cartItems: [], // Por defecto será un arreglo vacío
-    },
+        // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un arreglo vacío
+        cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [] 
+    }
 };
 
 // Definiendo el Reducer
@@ -49,7 +50,28 @@ function reducer(state, action) {
                 // al final del arreglo
                 : [...state.cart.cartItems, newItem];
 
+            // Utilizando 'LocalStorage' para poder almacenar los items en el Carrito
+            // La clave en el propio LocalStorage será 'cartItems'.
+            // El segundo parámetro es el valor de tipo String que será guardado en la clave.
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
             return { ...state, cart: { ...state.cart, cartItems } };
+
+        // En este caso hacemos referencia a cuando queremos quitar items del Carrito
+        case 'CART_REMOVE_ITEM': {
+
+            // Realizar un filtro para quitar el item indicado
+            const cartItems = state.cart.cartItems.filter(
+                (item) => item._id !== action.payload._id
+            );
+
+            // Utilizando 'LocalStorage' para cuando se eliminan los items del Carrito
+            // La clave en el propio LocalStorage será 'cartItems'.
+            // El segundo parámetro es el valor de tipo String que será guardado en la clave.
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+            return { ...state, cart: { ...state.cart, cartItems } };
+        }
 
         default:
             return state;
