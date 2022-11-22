@@ -12,11 +12,20 @@ export const Store = createContext();
 // Variable para representar el estado inicial 
 const initialState = {
 
-    // El primer campo del objeto es 'cart'
+    // El primer campo del objeto es 'userInfo'
+    userInfo: localStorage.getItem('userInfo')
+    
+        // Si hay un usuario logeado, obtener lo almacenado en 'userInfo'
+        ? JSON.parse(localStorage.getItem('userInfo'))
+        // Si no hay un usuario logeado, el valor inicial será 'null'
+        : null,
+
+    // El segundo campo del objeto es 'cart'
     // Que a su vez es un objeto en el que se almacenarán los items del carrito
     cart: {
+
         // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un arreglo vacío
-        cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [] 
+        cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : []
     }
 };
 
@@ -72,6 +81,21 @@ function reducer(state, action) {
 
             return { ...state, cart: { ...state.cart, cartItems } };
         }
+
+        // En este caso hacemos referencia a cuando queremos logearnos
+        case 'USER_SIGNIN':
+
+            // Retornamos el estado previo y actualizar 'userInfo' con los datos que obtengamos del servidor
+            return { ...state, userInfo: action.payload };
+
+        // En este caso hacemos referencia a cuando queremos deslogearnos
+        case 'USER_SIGNOUT':
+
+            // Retornamos el estado previo y actualizamos 'userInfo' a 'null'
+            return {
+                ...state,
+                userInfo: null,
+            };
 
         default:
             return state;

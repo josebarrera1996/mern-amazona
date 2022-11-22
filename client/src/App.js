@@ -1,6 +1,8 @@
-import { Container, Navbar, Badge, Nav } from 'react-bootstrap';
+import { Container, Navbar, Badge, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import HomeScreen from './screens/HomeScreen.js';
 import ProductScreen from './screens/ProductScreen.js';
 import { useContext } from 'react';
@@ -11,13 +13,27 @@ import SigninScreen from './screens/SigninScreen.js';
 function App() {
 
   // Lógica para que se pueda visualizar en este componente el número de items agregados al Carrito
-  const { state } = useContext(Store);
-  const { cart } = state;
+  // Y poder obtener información sobre el usuario logeado
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+
+  const { cart, userInfo } = state;
+
+  // Método para poder deslogearse
+  const signoutHandler = () => {
+
+    // Llamar a el dispatch
+    ctxDispatch({ type: 'USER_SIGNOUT' });
+
+    // Remover 'userInfo' del LocalStorage para completar el deslogeo
+    localStorage.removeItem('userInfo');
+  };
 
   return (
 
     <BrowserRouter>
       <div className="d-flex flex-column site-container">
+        {/* Se mostrará solo un 'Toast' a la vez */}
+        <ToastContainer position='bottom-center' limit={1} />
         <header>
           <Navbar bg="dark" variant="dark">
             <Container>
@@ -35,6 +51,30 @@ function App() {
                     </Badge>
                   )}
                 </Link>
+                {userInfo ? (
+                  // Si 'userInfo' es verdadero, mostrar lo siguiente
+                  <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                    <LinkContainer to="/profile">
+                      <NavDropdown.Item>User Profile</NavDropdown.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/orderhistory">
+                      <NavDropdown.Item>Order History</NavDropdown.Item>
+                    </LinkContainer>
+                    <NavDropdown.Divider />
+                    <Link
+                      className="dropdown-item"
+                      to="#signout"
+                    onClick={signoutHandler}
+                    >
+                      Sign Out
+                    </Link>
+                  </NavDropdown>
+                ) : (
+                  // Si 'userInfo' es falso, mostrar lo siguiente
+                  <Link className="nav-link" to="/signin">
+                    Sign In
+                  </Link>
+                )}
               </Nav>
             </Container>
           </Navbar>
@@ -53,7 +93,7 @@ function App() {
           <div className="text-center">All rights reserved</div>
         </footer>
       </div>
-    </BrowserRouter>
+    </BrowserRouter >
   );
 }
 
