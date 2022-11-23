@@ -1,12 +1,12 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer } from 'react';
 import axios from 'axios';
-import logger from 'use-reducer-logger'; // Para logear los cambios de estado
-import { Row, Col } from 'react-bootstrap';
+import logger from 'use-reducer-logger';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Product from '../components/Product';
-import { Helmet } from "react-helmet-async";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-
+import { Helmet } from 'react-helmet-async';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
 // El 1er parámetro hace referencia al 'estado' actual

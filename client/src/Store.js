@@ -14,15 +14,18 @@ const initialState = {
 
     // El primer campo del objeto es 'userInfo'
     userInfo: localStorage.getItem('userInfo')
-    
+
         // Si hay un usuario logeado, obtener lo almacenado en 'userInfo'
         ? JSON.parse(localStorage.getItem('userInfo'))
         // Si no hay un usuario logeado, el valor inicial será 'null'
         : null,
 
     // El segundo campo del objeto es 'cart'
-    // Que a su vez es un objeto en el que se almacenarán los items del carrito
+    // Que a su vez es un objeto en el que se almacenarán los datos de la dirección de envío y los items del carrito
     cart: {
+
+        // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un objeto vacío
+        shippingAddress: localStorage.getItem('shippingAddress') ? JSON.parse(localStorage.getItem('shippingAddress')) : {},
 
         // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un arreglo vacío
         cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : []
@@ -45,7 +48,6 @@ function reducer(state, action) {
             const existItem = state.cart.cartItems.find(
                 (item) => item._id === newItem._id
             );
-
 
             const cartItems = existItem
 
@@ -92,9 +94,27 @@ function reducer(state, action) {
         case 'USER_SIGNOUT':
 
             // Retornamos el estado previo y actualizamos 'userInfo' a 'null'
+            // Luego con respecto a el estado del carrito: 'cartItems' será un arreglo vacío y 'shippingAddress' un objeto vacío
             return {
                 ...state,
                 userInfo: null,
+                cart: {
+                    cartItems: [],
+                    shippingAddress: {},
+                }
+            };
+
+        // En este caso hacemos referencia a cunado queremos guardar la dirección de envío
+        case 'SAVE_SHIPPING_ADDRESS':
+
+            // Retornamos el estado previo y lo que cambiaremos es el estado del carrito.
+            // Y dentro de este, solo la dirección de envío. La cuál será actualizada con la acción del payload
+            return {
+                ...state,
+                cart: {
+                  ...state.cart,
+                  shippingAddress: action.payload,
+                }
             };
 
         default:

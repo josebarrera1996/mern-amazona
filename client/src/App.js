@@ -8,7 +8,9 @@ import ProductScreen from './screens/ProductScreen.js';
 import { useContext } from 'react';
 import { Store } from './Store';
 import CartScreen from './screens/CartScreen.js';
-import SigninScreen from './screens/SigninScreen.js';
+import SigninScreen from './screens/SigninScreen';
+import ShippingAddressScreen from './screens/ShippingAddressScreen';
+
 
 function App() {
 
@@ -26,6 +28,9 @@ function App() {
 
     // Remover 'userInfo' del LocalStorage para completar el deslogeo
     localStorage.removeItem('userInfo');
+
+    // Remover 'shippingAddress' del LocalStorage para completar el deslogeo
+    localStorage.removeItem('shippingAddress');
   };
 
   return (
@@ -64,7 +69,7 @@ function App() {
                     <Link
                       className="dropdown-item"
                       to="#signout"
-                    onClick={signoutHandler}
+                      onClick={signoutHandler}
                     >
                       Sign Out
                     </Link>
@@ -85,6 +90,7 @@ function App() {
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
               <Route path="/signin" element={<SigninScreen />} />
+              <Route path="/shipping" element={<ShippingAddressScreen />} />
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>

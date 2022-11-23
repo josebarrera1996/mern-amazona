@@ -1,15 +1,17 @@
-import { Container, Form, Button } from "react-bootstrap";
-import { Helmet } from 'react-helmet-async';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Helmet } from 'react-helmet-async';
+import { useContext, useEffect, useState } from 'react';
 import { Store } from '../Store';
-import { toast } from "react-toastify";
-import { getError } from '../utils.js';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
 
 // Componente de tipo funcional
 // Representa la sección para logearnos
-function SigninScreen() {
+export default function SigninScreen() {
 
     // Utilizando 'useNavigate' para el manejo de la navegación
     const navigate = useNavigate();
@@ -122,4 +124,3 @@ function SigninScreen() {
     )
 }
 
-export default SigninScreen;

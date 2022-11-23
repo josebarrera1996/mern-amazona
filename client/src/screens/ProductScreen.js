@@ -1,13 +1,18 @@
-import { /* useNavigate ,*/ useParams } from 'react-router-dom';
-import { useContext, useEffect, useReducer } from "react";
 import axios from 'axios';
-import { Row, Col, ListGroup, Card, Badge, Button } from 'react-bootstrap';
+import { useContext, useEffect, useReducer } from 'react';
+import { useParams } from 'react-router-dom';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
 import Rating from '../components/Rating';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { getError } from '../utils'; // Para el manejo de errores
-import { Store } from '../Store'; // Para manejar el contexto general
+import { getError } from '../utils';
+import { Store } from '../Store';
 
 // Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
 // El 1er parámetro hace referencia al 'estado' actual

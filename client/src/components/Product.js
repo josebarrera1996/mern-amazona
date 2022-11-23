@@ -1,9 +1,10 @@
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom';
+import Rating from './Rating';
 import axios from 'axios';
 import { useContext } from 'react';
-import { Card, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { Store } from '../Store';
-import Rating from './Rating';
 
 // Componente de tipo funcional
 // Representará la estructura de un producto para que el mismo pueda ser renderizado en otros componentes
