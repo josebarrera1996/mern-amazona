@@ -13,6 +13,33 @@ const userRouter = express.Router(); // Accediendo a 'Router'
 /* Definiendo las rutas */
 // Se utilizará 'expressAsyncHandler' para el manejo de errores en las funciones asíncronas. Esto será manejado en 'server.js'
 
+// Ruta para poder registrarnos
+userRouter.post('/signup', expressAsyncHandler(async (req, res) => {
+
+    // Preparando el documento a insertar
+    const newUser = new User({
+
+        // Campos
+        name: req.body.name,
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password),
+    });
+
+    // Insertándolo en la B.D
+    const user = await newUser.save();
+
+    // Enviando la respuesta de lo obtenido
+    res.send({
+
+        // Campos
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        token: generateToken(user)
+    });
+}));
+
 // Ruta para poder logearnos
 userRouter.post('/signin', expressAsyncHandler(async (req, res) => {
 
