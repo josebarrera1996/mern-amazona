@@ -11,6 +11,7 @@ import CartScreen from './screens/CartScreen.js';
 import SigninScreen from './screens/SigninScreen';
 import ShippingAddressScreen from './screens/ShippingAddressScreen';
 import SignupScreen from './screens/SignupScreen.js';
+import PaymentMethodScreen from './screens/PaymentMethodScreen.js';
 
 
 function App() {
@@ -32,6 +33,9 @@ function App() {
 
     // Remover 'shippingAddress' del LocalStorage para completar el deslogeo
     localStorage.removeItem('shippingAddress');
+
+    // Remover 'paymentMethod' del LocalStorage para completar el deslogeo
+    localStorage.removeItem('paymentMethod');
   };
 
   return (
@@ -93,6 +97,7 @@ function App() {
               <Route path="/signin" element={<SigninScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
               <Route path="/shipping" element={<ShippingAddressScreen />} />
+              <Route path="/payment" element={<PaymentMethodScreen />} />
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>

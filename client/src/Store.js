@@ -1,10 +1,5 @@
 import { createContext, useReducer } from 'react';
 
-/* 
-Todo lo desarrollado aquí será para crear un contexto en el que se puedan guardar 'items' en un carrito, el cuál
-estará situado en el 'Navbar'. Todo esto gracias a la presencia de un 'estado global'.
-*/
-
 // Creando el contexto de React
 // Para guardar los items en un estado global y de esta manera poder utilizarlo en los componentes de la app.
 export const Store = createContext();
@@ -27,6 +22,9 @@ const initialState = {
         // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un objeto vacío
         shippingAddress: localStorage.getItem('shippingAddress') ? JSON.parse(localStorage.getItem('shippingAddress')) : {},
 
+        // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un string vacío
+        paymentMethod: localStorage.getItem('paymentMethod') ? localStorage.getItem('paymentMethod')  : '',
+            
         // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un arreglo vacío
         cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : []
     }
@@ -94,17 +92,19 @@ function reducer(state, action) {
         case 'USER_SIGNOUT':
 
             // Retornamos el estado previo y actualizamos 'userInfo' a 'null'
-            // Luego con respecto a el estado del carrito: 'cartItems' será un arreglo vacío y 'shippingAddress' un objeto vacío
+            // Luego con respecto a el estado del carrito: 'cartItems' será un arreglo vacío , 'shippingAddress' un objeto vacío
+            // y 'paymentMethod' una cadena vacía.
             return {
                 ...state,
                 userInfo: null,
                 cart: {
                     cartItems: [],
                     shippingAddress: {},
+                    paymentMethod: ''
                 }
             };
 
-        // En este caso hacemos referencia a cunado queremos guardar la dirección de envío
+        // En este caso hacemos referencia a cuando queremos guardar la dirección de envío
         case 'SAVE_SHIPPING_ADDRESS':
 
             // Retornamos el estado previo y lo que cambiaremos es el estado del carrito.
@@ -112,9 +112,19 @@ function reducer(state, action) {
             return {
                 ...state,
                 cart: {
-                  ...state.cart,
-                  shippingAddress: action.payload,
+                    ...state.cart,
+                    shippingAddress: action.payload,
                 }
+            };
+
+        // En este caso hacemos referencia a cuando queremos guardar el método de pago del pedido
+        case 'SAVE_PAYMENT_METHOD':
+
+            // Retornamos el estado previo y lo que cambiaremos es el estado del carrito.
+            // Y dentro de este, solo el método de pago del pedido. El cuál será actualizado con la acción del payload.
+            return {
+                ...state,
+                cart: { ...state.cart, paymentMethod: action.payload },
             };
 
         default:
