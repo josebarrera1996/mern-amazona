@@ -23,8 +23,8 @@ const initialState = {
         shippingAddress: localStorage.getItem('shippingAddress') ? JSON.parse(localStorage.getItem('shippingAddress')) : {},
 
         // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un string vacío
-        paymentMethod: localStorage.getItem('paymentMethod') ? localStorage.getItem('paymentMethod')  : '',
-            
+        paymentMethod: localStorage.getItem('paymentMethod') ? localStorage.getItem('paymentMethod') : '',
+
         // El estado inicial será lo preservado en el LocalStorage (si es que existe 'getItems'). Sino, un arreglo vacío
         cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : []
     }
@@ -81,6 +81,12 @@ function reducer(state, action) {
 
             return { ...state, cart: { ...state.cart, cartItems } };
         }
+
+        // En este caso hacemos referencia a cuando queremos limpiar el carrito
+        case 'CART_CLEAR':
+
+            // Retornamos el estado previo y actualizamos a 'cart' al asignarle un arreglo vacío a 'cartItems'
+            return { ...state, cart: { ...state.cart, cartItems: [] } };
 
         // En este caso hacemos referencia a cuando queremos logearnos
         case 'USER_SIGNIN':

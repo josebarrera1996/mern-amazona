@@ -6,6 +6,7 @@ import dotenv from 'dotenv'; // Importando 'Dotenv' (para cargar el archivo .env
 import seedRouter from './routes/seedRoutes.js'; // Importando el enrutador 'seedRouter'
 import productRouter from './routes/productRoutes.js'; // Importando el enrutador 'productRouter'
 import userRouter from './routes/userRoutes.js'; // Importando el enrutador 'userRouter'
+import orderRouter from './routes/orderRoutes.js'; // Importando el enrutador 'orderRouter'
 
 
 // Utilizando 'dotenv' para cargar la información del archivo .env en nuestra app
@@ -40,6 +41,8 @@ app.use('/api/seed', seedRouter); // http://localhost:5000/api/seed + seedRouter
 app.use('/api/products', productRouter); // http://localhost:5000/api/products + productRouter
 
 app.use('/api/users', userRouter); // http://localhost:5000/api/users + userRouter
+
+app.use('/api/orders', orderRouter); // http://localhost:5000/api/orders + orderRouter
 
 
 // Implementando el manejo de errores

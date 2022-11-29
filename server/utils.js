@@ -27,3 +27,42 @@ export const generateToken = (user) => {
         expiresIn: '30d', // El token generado expirará en '30' días
     });
 };
+
+
+// Función para comprobar si estamos autenticados
+
+export const isAuth = (req, res, next) => {
+
+    // Obtener el valor del parámetro 'authorization' de 'headers'
+    const authorization = req.headers.authorization;
+
+    // Si existe 'authorization'...
+    if (authorization) {
+
+        // Obtener el token (omitiendo el valor 'Bearer ')
+        const token = authorization.slice(7, authorization.length); // Bearer XXXXXX
+
+        //  Verificar si hay coincidencia en los tokens 
+        jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
+
+            // Si no hay coincidencia...
+            if (err) {
+
+                // Enviar este error
+                res.status(401).send({ message: 'Invalid Token' });
+            } else {
+
+                // Si hay coincidencia, decodificarlo para obtener la información del usuario
+                req.user = decode;
+
+                // Seguir con el siguiente middleware
+                next();
+            }
+        });
+
+    } else {
+
+        // En caso de que no haya token, enviar esta respuesta
+        res.status(401).send({ message: 'No Token' });
+    }
+};

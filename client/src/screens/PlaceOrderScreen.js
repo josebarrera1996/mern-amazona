@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useReducer, useContext, useEffect } from 'react';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { Helmet } from 'react-helmet-async';
 import Row from 'react-bootstrap/Row';
@@ -8,6 +8,53 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Link, useNavigate } from 'react-router-dom';
 import { Store } from '../Store';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
+import LoadingBox from '../components/LoadingBox';
+
+
+// Definiendo un 'reducer' para manejar los distintos estados al enviar una petición 'ajax'
+// El 1er parámetro hace referencia al 'estado' actual
+// El 2do parámetro es la 'acción' que cambia el estado y crea uno nuevo
+const reducer = (state, action) => {
+
+    // Utilizando 'switch' para comparar los tipos de acciones 
+    switch (action.type) {
+
+        // Primer caso
+        // Este es el inicial y sucede cuando enviamos una petición 'Ajax' al servidor
+        case 'CREATE_REQUEST':
+
+            // Retornaremos un nuevo estado (en donde preservamos los anteriores valores del estado)
+            // Y lo único que actualizamos es 'loading' a 'true'. Esto último será utilizado para mostrar
+            // algo cuando se este este cargando
+            return { ...state, loading: true }
+
+        // Segundo caso
+        // Este es el caso posterior al primero y básicamente es la orden que se realizó
+        case 'CREATE_SUCCESS':
+
+            // Retornaremos un nuevo estado (en donde preservaremos los anteriores valores del estado)
+            // Actualizaremos 'loading' a 'false'
+            return { ...state, loading: false };
+
+        // Tercer caso
+        // Este es el peor de los casos y sucederá cuando exista algún tipo de error con la petición 'Ajax'
+        case 'CREATE_FAIL':
+
+            // Retornaremos un nuevo estado (en donde preservaremos los anteriores valores del estado)
+            // Actualizaremos 'loading' a 'false'
+            return { ...state, loading: false };
+
+        default:
+
+            // Retornará el estado actual
+            return state;
+    }
+}
+
+
 
 // Componente funcional
 // En este componente se visualizará todo los pasos previos que completó el usuario con respecto al pedido
@@ -15,6 +62,12 @@ export default function PlaceOrderScreen() {
 
     // Utilizando 'useNavigate' para manejar la navegación
     const navigate = useNavigate();
+
+
+    // Utilizando 'useReducer' para el manejo del pedido
+    const [{ loading }, dispatch] = useReducer(reducer, {
+        loading: false,
+    });
 
 
     // Accediendo al contexto de React
@@ -42,7 +95,52 @@ export default function PlaceOrderScreen() {
 
 
     // Método para dar por realizado al pedido
-    const placeOrderHandler = async () => { };
+    const placeOrderHandler = async () => {
+
+        try {
+
+            // Despachar la acción 'CREATE_REQUEST' para manejar el envío de la petición Ajax
+            dispatch({ type: 'CREATE_REQUEST' });
+
+            // Enviar la petición Ajax
+            const { data } = await axios.post('/api/orders',
+                
+                {
+                    orderItems: cart.cartItems,
+                    shippingAddress: cart.shippingAddress,
+                    paymentMethod: cart.paymentMethod,
+                    itemsPrice: cart.itemsPrice,
+                    shippingPrice: cart.shippingPrice,
+                    taxPrice: cart.taxPrice,
+                    totalPrice: cart.totalPrice,
+                },
+                // Debemos de estar autentiticado, es por ello que enviamos el token de JWT
+                {
+                    headers: {
+                        authorization: `Bearer ${userInfo.token}`,
+                    },
+                }
+            );
+
+            // Luego de haber enviado la petición, limpiar el carrito...
+            ctxDispatch({ type: 'CART_CLEAR' });
+
+            // También despachar 'CREATE_SUCCESS'
+            dispatch({ type: 'CREATE_SUCCESS' });
+
+            // Limpiar el LocalStorage
+            localStorage.removeItem('cartItems');
+
+            // Navegar hacia la orden recien creada
+            navigate(`/order/${data.order._id}`);
+
+        } catch (err) {
+
+            // En caso de error, despachar 'CREATE_FAIL' y mostrar el error mediante una alerta personalizada
+            dispatch({ type: 'CREATE_FAIL' });
+            toast.error(getError(err));
+        }
+    };
 
 
     // Utilizando 'useEffect' para chequear si el usuario ha elegido un método de pago para el pedido
@@ -164,6 +262,10 @@ export default function PlaceOrderScreen() {
                                         >
                                             Place Order
                                         </Button>
+                                        {/* En caso de que 'loading' es true, renderizar 'LoadingBox' */}
+                                        {
+                                            loading && <LoadingBox></LoadingBox>
+                                        }
                                     </div>
                                 </ListGroup.Item>
                             </ListGroup>
