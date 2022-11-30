@@ -13,6 +13,7 @@ import ShippingAddressScreen from './screens/ShippingAddressScreen';
 import SignupScreen from './screens/SignupScreen.js';
 import PaymentMethodScreen from './screens/PaymentMethodScreen.js';
 import PlaceOrderScreen from './screens/PlaceOrderScreen.js';
+import OrderScreen from './screens/OrderScreen.js';
 
 
 function App() {
@@ -100,6 +101,7 @@ function App() {
               <Route path="/shipping" element={<ShippingAddressScreen />} />
               <Route path="/payment" element={<PaymentMethodScreen />} />
               <Route path="/placeorder" element={<PlaceOrderScreen />} />
+              <Route path="/order/:id" element={<OrderScreen />} />
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>

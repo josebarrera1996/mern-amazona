@@ -36,6 +36,25 @@ orderRouter.post('/', isAuth, expressAsyncHandler(async (req, res) => {
     res.status(201).send({ message: 'New Order Created', order });
 }));
 
+// Ruta para poder acceder a una orden
+orderRouter.get('/:id', isAuth, expressAsyncHandler(async (req, res) => {
+
+    // Obtenemos los datos de la órden que coincida con el parámetro 'id'
+    const order = await Order.findById(req.params.id);
+
+    // Si la orden existe..
+    if (order) {
+
+        // Enviar los datos de la misma
+        res.send(order);
+
+    } else {
+
+        // En caso de error, enviar este mensaje de error
+        res.status(404).send({ message: 'Order Not Found' });
+    }
+}));
+
 
 // Exportando este módulo
 
