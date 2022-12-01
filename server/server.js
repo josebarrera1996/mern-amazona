@@ -36,6 +36,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Implementando las rutas
 
+app.get('/api/keys/paypal', (req, res) => { // API para retornarle el 'client_id' al frontend
+    res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
+});
+
 app.use('/api/seed', seedRouter); // http://localhost:5000/api/seed + seedRouter
 
 app.use('/api/products', productRouter); // http://localhost:5000/api/products + productRouter
