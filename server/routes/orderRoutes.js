@@ -36,6 +36,16 @@ orderRouter.post('/', isAuth, expressAsyncHandler(async (req, res) => {
     res.status(201).send({ message: 'New Order Created', order });
 }));
 
+// Ruta para acceder a las órdenes de un usuario en específico
+orderRouter.get('/mine', isAuth, expressAsyncHandler(async (req, res) => {
+
+    // Obtener las órdenes del usuario gracias al parámetro
+    const orders = await Order.find({ user: req.user._id });
+
+    // Enviar la respuesta
+    res.send(orders);
+}));
+
 // Ruta para poder acceder a una orden
 orderRouter.get('/:id', isAuth, expressAsyncHandler(async (req, res) => {
 
