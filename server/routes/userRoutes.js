@@ -4,7 +4,7 @@ import express from 'express'; // Importando 'Express'
 import expressAsyncHandler from 'express-async-handler'; // Importando 'express-async-handler'
 import User from '../models/userModel.js'; // Importando el Modelo
 import bcrypt from 'bcryptjs'; // Importando 'Bcryptjs'
-import { generateToken } from '../utils.js';
+import { isAuth, generateToken } from '../utils.js';
 
 // Creando el enrutador
 
@@ -69,6 +69,47 @@ userRouter.post('/signin', expressAsyncHandler(async (req, res) => {
 
     // Si el email o la contraseña ingresada son incorrectas...
     res.status(401).send({ message: 'Invalid email or password' });
+}));
+
+
+// Ruta para poder actualizar al usuario
+userRouter.put('/profile', isAuth, expressAsyncHandler(async (req, res) => {
+
+    // Traer los datos del usuario gracias a su ID
+    const user = await User.findById(req.user._id);
+
+    // Si el usuario existe...
+    if (user) {
+
+        // Actualizar 'name' con lo completado en la petición o dejar el valor anterior
+        user.name = req.body.name || user.name;
+
+        // Actualizar 'email' con lo completado en la petición o dejar el valor anterior
+        user.email = req.body.email || user.email;
+
+        // Si vamos a actualizar la password, encriptarla
+        if (req.body.password) {
+            user.password = bcrypt.hashSync(req.body.password, 8);
+        }
+
+        // Guardar en la B.D los cambios
+        const updatedUser = await user.save();
+
+        // Enviar esta respuesta
+        res.send({
+
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            token: generateToken(updatedUser),
+        });
+
+    } else {
+
+        // En caso de error, enviar esta respuesta
+        res.status(404).send({ message: 'User not found' });
+    }
 }));
 
 
