@@ -1,6 +1,7 @@
 /* En este archivo definiremos las rutas relacionadas al manejo de los productos */
 
 import express from 'express'; // Importando 'Express'
+import expressAsyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js'; // Importando el Modelo
 
 // Creando el enrutador
@@ -16,6 +17,15 @@ productRouter.get('/', async (req, res) => {
     const products = await Product.find();
     res.send(products);
 });
+
+// Método para traer las categorías (únicas) de los productos
+productRouter.get('/categories', expressAsyncHandler(async (req, res) => {
+
+    // Método para traer los registros no duplicados
+    const categories = await Product.find().distinct('category');
+
+    res.send(products);
+}));
 
 // Método para traer un producto en particular, gracias a al acceder al parámetro 'slug'
 productRouter.get('/slug/:slug', async (req, res) => {

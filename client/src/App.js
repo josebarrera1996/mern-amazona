@@ -1,11 +1,11 @@
 import { Container, Navbar, Badge, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HomeScreen from './screens/HomeScreen.js';
 import ProductScreen from './screens/ProductScreen.js';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Store } from './Store';
 import CartScreen from './screens/CartScreen.js';
 import SigninScreen from './screens/SigninScreen';
@@ -16,15 +16,21 @@ import PlaceOrderScreen from './screens/PlaceOrderScreen.js';
 import OrderScreen from './screens/OrderScreen.js';
 import OrderHistoryScreen from './screens/OrderHistoryScreen.js';
 import ProfileScreen from './screens/ProfileScreen.js';
+import Button from 'react-bootstrap/Button';
+import { getError } from './utils';
+import axios from 'axios';
+import SearchBox from './components/SearchBox';
 
 
 function App() {
+
 
   // Lógica para que se pueda visualizar en este componente el número de items agregados al Carrito
   // Y poder obtener información sobre el usuario logeado
   const { state, dispatch: ctxDispatch } = useContext(Store);
 
   const { cart, userInfo } = state;
+
 
   // Método para poder deslogearse
   const signoutHandler = () => {
@@ -45,20 +51,62 @@ function App() {
     window.location.href = '/signin';
   };
 
+  // Utilizando 'useState' para manejar la sección de 'Categorías'
+  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
+
+  const [categories, setCategories] = useState([]);
+
+
+  // Utilizando 'useEffect' para traer las categorías de los productos
+  useEffect(() => {
+
+    const fetchCategories = async () => {
+
+      try {
+
+        // Petición 'Ajax' al servidor
+        const { data } = await axios.get(`/api/products/categories`);
+
+        // Actualizar 'categories' con lo obtenido anteriormente
+        setCategories(data);
+
+      } catch (err) {
+
+        // En caso de error, mostrar el mensaje en alerta
+        toast.error(getError(err));
+      }
+    };
+
+    // Invocando
+    fetchCategories();
+  }, []);
+
+
   return (
 
     <BrowserRouter>
-      <div className="d-flex flex-column site-container">
+      <div className={
+          sidebarIsOpen
+            ? 'd-flex flex-column site-container active-cont'
+            : 'd-flex flex-column site-container'
+        }>
         {/* Se mostrará solo un 'Toast' a la vez */}
         <ToastContainer position='bottom-center' limit={1} />
         <header>
           <Navbar bg="dark" variant="dark" expand='lg'>
             <Container>
+            <Button
+                variant="dark"
+                onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
+              >
+                <i className="fas fa-bars"></i>
+              </Button>
               <LinkContainer to="/">
                 <Navbar.Brand>amazona</Navbar.Brand>
               </LinkContainer>
               <Navbar.Toggle aria-controls='basic-navbar-nav' />
               <Navbar.Collapse id='basic-navbar-nav'>
+              <SearchBox />
                 <Nav className="me-auto w-100 justify-content-end">
                   <Link to="/cart" className="nav-link">
                     Cart
@@ -99,6 +147,29 @@ function App() {
             </Container>
           </Navbar>
         </header>
+        <div
+          className={
+            sidebarIsOpen
+              ? 'active-nav side-navbar d-flex justify-content-between flex-wrap flex-column'
+              : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
+          }
+        >
+          <Nav className="flex-column text-white w-100 p-2">
+            <Nav.Item>
+              <strong>Categories</strong>
+            </Nav.Item>
+            {categories.map((category) => (
+              <Nav.Item key={category}>
+                <LinkContainer
+                  to={`/search?category=${category}`}
+                  onClick={() => setSidebarIsOpen(false)}
+                >
+                  <Nav.Link>{category}</Nav.Link>
+                </LinkContainer>
+              </Nav.Item>
+            ))}
+          </Nav>
+        </div>
         <main>
           <Container className="mt-3">
             <Routes>
